@@ -32,7 +32,6 @@ const getCollection = ( collection ) =>{
     })
 
     return { document, error }
-
 }
 
 
