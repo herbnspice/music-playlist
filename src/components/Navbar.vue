@@ -3,6 +3,7 @@
     <nav>
       <h1> <router-link to="/">Music Playlist</router-link> </h1> 
       <div class="links">
+         <router-link class="btn" :to="{ name: 'CreatePlaylist' }" v-if="user"> Create Playlist</router-link>
         <button @click="handlSubmit" v-if="user"> Logout</button>
         <router-link to="/login" class="btn"   v-if="!user" >Login</router-link>
         <router-link to="/signup" class="btn"  v-if="!user"> Signup </router-link>

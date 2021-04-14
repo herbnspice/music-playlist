@@ -12,7 +12,6 @@ const getCollection = ( collection ) =>{
         
     const unsub = collectionRef.onSnapshot( ( snap ) => {
         let results = []
-        console.log( 'snap')
         snap.docs.forEach( doc => {
             doc.data().createdAt && results.push( { ...doc.data(), id : doc.data().id } )
         })

@@ -7,22 +7,26 @@
       <input type="file" @change="handleChange">
       <div class="error"> {{ error }}</div>
       <div class="error"> {{fileError }}</div>
-      <button > Create </button>
+      <button :disabled="isPending"> Create </button>
   </form>
 </template>
 
 <script>
 import { ref } from 'vue'
 import useStorage  from '@/composables/useStorage'
+import useCollection  from '@/composables/useCollection'
+import getUser   from '@/composables/getUser'
+import { timestamp } from '@/firebase/config'
 export default {
     setup(){
         const description = ref('')
         const title = ref('')
-        const error = ref('')
         const file = ref(null)
         const fileError = ref(null)
 
-        const { url, uploadImage } = useStorage()
+        const { filePath, url, uploadImage } = useStorage()
+        const { error, addDoc, isPending } = useCollection('playlist')
+        const { user } = getUser()
 
         const handleChange = (e) => {
             const selectedFile  = e.target.files[0]
@@ -38,15 +42,26 @@ export default {
         const handleSubmit = async () => {
             if( file.value ) {
                 await uploadImage(file.value )
-                console.log( 'image uploaded', url.value )
+                await addDoc({
+                    title: title.value,
+                    description: description.value,
+                    userId : user.value.uid,
+                    userName: user.value.displayName,
+                    coverUrl : url.value,
+                    filePath: filePath.value,
+                    songs: [],
+                    createdAt: timestamp()
+                })
 
-
+                if( !error.value ){
+                    console.log('playlist added')
+                }
             } else{
                 fileError.value = 'Please select an image file png or jpeg'
 
             }
         }
-        return { description , title, handleSubmit, error, handleChange, fileError}
+        return { description , title, handleSubmit, error, handleChange, fileError, isPending }
     }
 }
 </script>
